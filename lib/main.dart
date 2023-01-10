@@ -8,7 +8,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ServiceHelper serviceHelper = ServiceHelper();
   await serviceHelper.initializeService();
-  // await initializeService();
   runApp(const MyApp());
 }
 

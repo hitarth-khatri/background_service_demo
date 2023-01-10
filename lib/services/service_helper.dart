@@ -46,9 +46,8 @@ class ServiceHelper {
 
   static void onStart(ServiceInstance service) async {
     DartPluginRegistrant.ensureInitialized();
-    Position? position;
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
+
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
     if (service is AndroidServiceInstance) {
       ///foreground
@@ -67,46 +66,50 @@ class ServiceHelper {
       service.stopSelf();
     });
 
-    Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (service is AndroidServiceInstance) {
-        if (await service.isForegroundService()) {
-          position = await Geolocator.getCurrentPosition();
-          print("position: $position");
-          flutterLocalNotificationsPlugin.show(
-            888,
-            "Latitude: ${position?.latitude}",
-            "Longitude: ${position?.longitude}",
-            const NotificationDetails(
-              android: AndroidNotificationDetails(
-                'my_foreground',
-                'MY FOREGROUND SERVICE',
-                icon: 'ic_bg_service_small',
-                ongoing: true,
-                onlyAlertOnce: true,
-              ),
-            ),
-          );
-        }
-      }
-    });
-  }
+    if (service is AndroidServiceInstance) {
+      if (await service.isForegroundService()) {
+        ///get position
+        String? lat;
+        String? long;
+        Geolocator.getPositionStream().listen(
+          (position) {
+            lat = position.latitude.toString();
+            long = position.longitude.toString();
+            print("position: $lat, $long");
+          },
+        );
 
-  /*static Future getLocation() async {
-    Position? position;
-    position = await Geolocator.getCurrentPosition();
-    print("DATA: $position");
-    return position;
-  }*/
+        ///show notification
+        Timer.periodic(
+          const Duration(seconds: 1),
+          (timer) {
+            flutterLocalNotificationsPlugin.show(
+              888,
+              "Latitude : $lat",
+              "Longitude: $long",
+              const NotificationDetails(
+                android: AndroidNotificationDetails(
+                  'my_foreground',
+                  'MY FOREGROUND SERVICE',
+                  icon: 'ic_bg_service_small',
+                  ongoing: true,
+                  onlyAlertOnce: true,
+                ),
+              ),
+            );
+          },
+        );
+      }
+    }
+  }
 
   static permissionHandler() async {
     LocationPermission? permission;
     print("permission: $permission");
     permission = await Geolocator.requestPermission();
     print("permission: $permission");
-    /*if (permission == LocationPermission.deniedForever) {
+    if (permission == LocationPermission.deniedForever) {
       Geolocator.openAppSettings();
-    } else if (permission == LocationPermission.denied) {
-      Get.back();
-    }*/
+    }
   }
 }
