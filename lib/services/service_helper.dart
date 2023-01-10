@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -84,7 +83,7 @@ class ServiceHelper {
         ///show notification
         Timer.periodic(
           const Duration(seconds: 1),
-          (timer) async {
+          (timer) {
             awesomeNotifications.createNotification(
               content: NotificationContent(
                 id: 888,
@@ -96,6 +95,7 @@ class ServiceHelper {
                 NotificationActionButton(key: "stop", label: "Stop"),
               ],
             );
+
             /*flutterLocalNotificationsPlugin.show(
               888,
               "Latitude : $lat",
@@ -125,7 +125,6 @@ class ServiceHelper {
       Geolocator.openAppSettings();
     }
   }
-
 
 /*static Future<bool> notify() async {
     final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
