@@ -2,8 +2,9 @@
 
 import 'dart:async';
 import 'dart:ui';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -12,7 +13,7 @@ class ServiceHelper {
   Future<void> initializeService() async {
     final service = FlutterBackgroundService();
 
-    ///create channel
+    /*///create channel
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'my_foreground', //id
       'MY FOREGROUND SERVICE', //name
@@ -25,7 +26,7 @@ class ServiceHelper {
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+        ?.createNotificationChannel(channel);*/
 
     await permissionHandler();
 
@@ -35,7 +36,7 @@ class ServiceHelper {
         onStart: onStart,
         autoStart: true,
         isForegroundMode: true,
-        notificationChannelId: 'my_foreground',
+        notificationChannelId: 'basic_channel',
         initialNotificationTitle: "Starting service",
         initialNotificationContent: "waiting",
         foregroundServiceNotificationId: 888,
@@ -47,7 +48,8 @@ class ServiceHelper {
   static void onStart(ServiceInstance service) async {
     DartPluginRegistrant.ensureInitialized();
 
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
 
     if (service is AndroidServiceInstance) {
       ///foreground
@@ -82,8 +84,19 @@ class ServiceHelper {
         ///show notification
         Timer.periodic(
           const Duration(seconds: 1),
-          (timer) {
-            flutterLocalNotificationsPlugin.show(
+          (timer) async {
+            awesomeNotifications.createNotification(
+              content: NotificationContent(
+                id: 888,
+                channelKey: "basic_channel",
+                title: "Lat : $lat",
+                body: "Long: $long",
+              ),
+              actionButtons: [
+                NotificationActionButton(key: "stop", label: "Stop"),
+              ],
+            );
+            /*flutterLocalNotificationsPlugin.show(
               888,
               "Latitude : $lat",
               "Longitude: $long",
@@ -96,7 +109,7 @@ class ServiceHelper {
                   onlyAlertOnce: true,
                 ),
               ),
-            );
+            );*/
           },
         );
       }
@@ -112,4 +125,15 @@ class ServiceHelper {
       Geolocator.openAppSettings();
     }
   }
+
+
+/*static Future<bool> notify() async {
+    final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
+    return awesomeNotifications.createNotification(
+      content: NotificationContent(id: 1, channelKey: "service_demo"),
+      actionButtons: [
+        NotificationActionButton(key: "stop", label: "Stop"),
+      ],
+    );
+  }*/
 }
