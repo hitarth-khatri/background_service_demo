@@ -2,7 +2,7 @@
 
 import 'dart:async';
 import 'dart:ui';
-import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:example_background/services/notification_controller.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:geolocator/geolocator.dart';
@@ -47,9 +47,6 @@ class ServiceHelper {
   static void onStart(ServiceInstance service) async {
     DartPluginRegistrant.ensureInitialized();
 
-    // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
-
     if (service is AndroidServiceInstance) {
       ///foreground
       service.on('setAsForeground').listen((event) {
@@ -84,18 +81,7 @@ class ServiceHelper {
         Timer.periodic(
           const Duration(seconds: 1),
           (timer) {
-            awesomeNotifications.createNotification(
-              content: NotificationContent(
-                id: 888,
-                channelKey: "basic_channel",
-                title: "Lat : $lat",
-                body: "Long: $long",
-              ),
-              actionButtons: [
-                NotificationActionButton(key: "stop", label: "Stop"),
-              ],
-            );
-
+            NotificationController.createNewNotification(lat, long);
             /*flutterLocalNotificationsPlugin.show(
               888,
               "Latitude : $lat",
@@ -116,6 +102,7 @@ class ServiceHelper {
     }
   }
 
+  ///location permission
   static permissionHandler() async {
     LocationPermission? permission;
     print("permission: $permission");
@@ -125,14 +112,4 @@ class ServiceHelper {
       Geolocator.openAppSettings();
     }
   }
-
-/*static Future<bool> notify() async {
-    final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
-    return awesomeNotifications.createNotification(
-      content: NotificationContent(id: 1, channelKey: "service_demo"),
-      actionButtons: [
-        NotificationActionButton(key: "stop", label: "Stop"),
-      ],
-    );
-  }*/
 }
