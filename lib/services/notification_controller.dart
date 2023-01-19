@@ -37,7 +37,6 @@ class NotificationController {
   ///action button click
   static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
     final service = FlutterBackgroundService();
-    print(receivedAction.buttonKeyPressed);
     if (receivedAction.buttonKeyPressed == "stop") {
       service.invoke("stopService");
     }

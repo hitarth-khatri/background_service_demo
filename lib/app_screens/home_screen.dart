@@ -42,14 +42,11 @@ class _HomePageState extends State<HomePage> {
                     final service = FlutterBackgroundService();
                     var isRunning = await service.isRunning();
                     if (isRunning) {
+                      text = "Start";
                       service.invoke("stopService");
                     } else {
-                      service.startService();
-                    }
-                    if (!isRunning) {
                       text = 'Stop';
-                    } else {
-                      text = 'Start';
+                      service.startService();
                     }
                     setState(() {});
                   },
@@ -61,4 +58,5 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
 }
