@@ -1,5 +1,7 @@
 import 'dart:async';
-import 'package:example_background/app_screens/home_screen.dart';
+import 'package:example_background/app_routes/app_pages.dart';
+import 'package:example_background/app_screens/home/view/home_screen.dart';
+import 'package:example_background/app_screens/splash_screen.dart';
 import 'package:example_background/services/notification_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,7 +31,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.indigo,
       ),
-      home: const HomePage(),
+      home: const SplashScreen(),
+      getPages: AppPages.pages,
     );
   }
 }

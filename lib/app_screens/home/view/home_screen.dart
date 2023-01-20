@@ -1,15 +1,10 @@
+import 'package:example_background/app_screens/home/controller/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:get/get.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends GetView<HomeController> {
   const HomePage({Key? key}) : super(key: key);
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  String text = "Stop";
 
   @override
   Widget build(BuildContext context) {
@@ -36,20 +31,19 @@ class _HomePageState extends State<HomePage> {
                     FlutterBackgroundService().invoke("setAsBackground");
                   },
                 ),
-                ElevatedButton(
-                  child: Text(text),
-                  onPressed: () async {
-                    final service = FlutterBackgroundService();
-                    var isRunning = await service.isRunning();
-                    if (isRunning) {
-                      text = "Start";
-                      service.invoke("stopService");
-                    } else {
-                      text = 'Stop';
-                      service.startService();
-                    }
-                    setState(() {});
-                  },
+                Obx(
+                  () => ElevatedButton(
+                    child: Text(controller.isService.value ? "Stop" : "Start"),
+                    onPressed: () async {
+                      if (controller.isService.value) {
+                        controller.isService.value = false;
+                        controller.service.invoke("stopService");
+                      } else {
+                        controller.isService.value = true;
+                        controller.service.startService();
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
@@ -58,5 +52,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
 }

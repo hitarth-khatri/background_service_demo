@@ -1,5 +1,7 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:example_background/app_screens/home/controller/home_controller.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:get/get.dart';
 
 class NotificationController {
 
@@ -37,7 +39,9 @@ class NotificationController {
   ///action button click
   static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
     final service = FlutterBackgroundService();
+    final homeController = Get.find<HomeController>();
     if (receivedAction.buttonKeyPressed == "stop") {
+      homeController.isService.value = false;
       service.invoke("stopService");
     }
   }
